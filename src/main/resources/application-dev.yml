@@ -4,10 +4,17 @@ spring:
   thymeleaf:
     cache: false
   output:
-    ans1:
+    ansi:
       enabled: always
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://127.0.0.1:3306/db
-    username: root
+    url: jdbc:h2:mem:db_dev;MODE=MYSQL
+    username: sa
     password:
+    driver-class-name: org.h2.Driver
+#  datasource:
+#    driver-class-name: org.mariadb.jdbc.Driver
+#    url: jdbc:mariadb://127.0.0.1:3306/db_dev
+#    username: root
+#    password:
+custom:
+  fileDirPath: /usr/file

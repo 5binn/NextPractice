@@ -17,19 +17,14 @@ public class ArticleService {
         return this.articleRepository.findAll();
     }
 
-    public Article getArticleById(Long id) {
-        Optional<Article> article = this.articleRepository.findById(id);
-        if (article.isEmpty()) {
-            return null;
-        }
-        return article.get();
+    public Optional<Article> getArticleById(Long id) {
+        return this.articleRepository.findById(id);
     }
 
 
-    public void deleteArticle(Long id) {
-        Article article = this.getArticleById(id);
-        this.articleRepository.delete(article);
-    }
+//    public void delete(Long id) {
+//        this.articleRepository.delete(article);
+//    }
 
     public void create(String title, String content) {
         Article article = Article.builder()

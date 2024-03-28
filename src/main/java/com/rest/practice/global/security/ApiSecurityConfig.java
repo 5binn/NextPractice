@@ -13,7 +13,7 @@ public class ApiSecurityConfig {
     @Bean
     SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/**")
+                .securityMatcher(new AntPathRequestMatcher("/api/**"))
                 .authorizeRequests((authorizeRequests) -> authorizeRequests
                                 .requestMatchers(new AntPathRequestMatcher("/api/*/articles/**")).permitAll()
                                 .anyRequest().authenticated())

@@ -23,13 +23,11 @@ public class ApiV1ArticleController {
         private final List<Article> articleList;
     }
 
-
     @GetMapping("")
     public RsData<ArticleListResponse> getArticles() {
         List<Article> articleList = this.articleService.getArticleList();
         return RsData.of("S-1", "성공", new ArticleListResponse(articleList));
     }
-
 
     @AllArgsConstructor
     @Getter

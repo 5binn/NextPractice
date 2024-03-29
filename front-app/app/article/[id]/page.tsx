@@ -2,22 +2,9 @@
 
 import { useParams  } from "next/navigation";
 import { useEffect, useState } from "react";
+import {ArticleData, ApiResponse} from "../types"
 
-interface ArticleData {
-    id: number;
-    title: string;
-    content: string;
-    createdDate: string;
-    modifieDDate: string;
-}
-
-interface ArticleResponse {
-    resultCode: string;
-    msg: string;
-    data: {
-        article: ArticleData;
-    }
-}
+interface ArticleResponse extends ApiResponse<ArticleData> {};
 
 export default function Id() {
     const params = useParams();

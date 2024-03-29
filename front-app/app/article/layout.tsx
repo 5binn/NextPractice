@@ -9,7 +9,6 @@ export default function ArticleLayout({
         <div>
             <Link href="/article">ARTICLE</Link>
             <Link href="/article/post"> / POST</Link>
-            <Link href="/article/post"> / POST</Link>
             {children}
         </div>
     );

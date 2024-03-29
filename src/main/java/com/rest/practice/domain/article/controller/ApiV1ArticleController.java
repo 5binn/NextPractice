@@ -26,6 +26,7 @@ public class ApiV1ArticleController {
     @GetMapping("")
     public RsData<ArticleListResponse> getArticles() {
         List<Article> articleList = this.articleService.getArticleList();
+        System.out.println(articleList);
         return RsData.of("S-1", "성공", new ArticleListResponse(articleList));
     }
 

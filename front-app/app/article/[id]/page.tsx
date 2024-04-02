@@ -1,19 +1,22 @@
 'use client'
 
-import { useParams  } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import {ArticleData, ApiResponse} from "../types"
+import { ArticleData, ApiResponse } from "../types"
 
-interface ArticleResponse extends ApiResponse<ArticleData> {};
+interface ArticleResponse extends ApiResponse<ArticleData> { };
 
 export default function Id() {
     const params = useParams();
     const [article, setArticle] = useState<ArticleData | null>(null);
     useEffect(() => {
         fetch("http://localhost:8090/api/v1/articles/" + params.id)
-        .then(response => response.json())
-        .then((result: ArticleResponse) => setArticle(result.data.article));
-    },[]);
+            .then(response => response.json())
+            .then((result: ArticleResponse) => {
+                if (result.msg === "성공") { setArticle(result.data.article); }
+                else console.error(result.msg)
+            });
+    }, [params.id]);
 
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);

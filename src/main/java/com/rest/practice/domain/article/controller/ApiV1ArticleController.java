@@ -3,9 +3,12 @@ package com.rest.practice.domain.article.controller;
 import com.rest.practice.domain.article.entity.Article;
 import com.rest.practice.domain.article.service.ArticleService;
 import com.rest.practice.global.rsData.RsData;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,9 +53,24 @@ public class ApiV1ArticleController {
         ));
     }
 
+    @Getter
+    @Setter
+    public static class ArticleForm {
+        @NotBlank
+        private String title;
+        @NotBlank
+        private String content;
+    }
+
+
+
     @PostMapping("")
-    public String createArticle() {
-        return "저장 완료";
+    public RsData<Article> createArticle(@Valid @RequestBody ArticleForm articleForm) {
+        Article article = this.articleService.create(articleForm.getTitle(), articleForm.getContent());
+        return RsData.of(
+                "S-1",
+                "등록완료",
+                new ArticleResponse(article));
     }
 
     @DeleteMapping("/{id}")

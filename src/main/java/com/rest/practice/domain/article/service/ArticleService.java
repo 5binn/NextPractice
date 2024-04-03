@@ -2,42 +2,105 @@ package com.rest.practice.domain.article.service;
 
 import com.rest.practice.domain.article.entity.Article;
 import com.rest.practice.domain.article.repository.ArticleRepository;
+import com.rest.practice.global.rsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleRepository articleRepository;
 
-    public List<Article> getArticleList() {
-        return this.articleRepository.findAll();
+    public RsData<List<Article>> getArticleList() {
+        List<Article> articleList = this.articleRepository.findAll();
+        if (articleList.isEmpty()) {
+            return RsData.of("F-1", "데이터 없음", null);
+        }
+        return RsData.of("S-1", "성공", articleList);
     }
 
-    public Optional<Article> getArticleById(Long id) {
-        return this.articleRepository.findById(id);
+    public RsData<Article> getArticleById(Long id) {
+        return this.articleRepository.findById(id).map((article) -> RsData.of(
+                "S-2",
+                "성공",
+                article
+        )).orElseGet(() -> RsData.of(
+                "F-2",
+                "%d 번 게시물 없음".formatted(id),
+                null
+        ));
     }
 
-    public void delete(Article article) {
-        this.articleRepository.delete(article);
+    @Transactional
+    public RsData<Article> delete(Long id) {
+        RsData<Article> articleRsData = this.getArticleById(id);
+        if (articleRsData.isFail()) {
+            return articleRsData;
+        }
+        try {
+            this.articleRepository.delete(articleRsData.getData());
+            return RsData.of(
+                    "S-4",
+                    "%d 번 삭제 완료".formatted(id),
+                    articleRsData.getData()
+            );
+        } catch (Exception e) {
+            return RsData.of(
+                    "F-4",
+                    "삭제 실패",
+                    null
+            );
+        }
     }
 
-    public Article create(String title, String content) {
-        Article article = Article.builder()
-                .title(title)
-                .content(content)
-                .build();
-        return this.articleRepository.save(article);
+    @Transactional
+    public RsData<Article> create(String title, String content) {
+        try {
+            Article article = Article.builder()
+                    .title(title)
+                    .content(content)
+                    .build();
+            this.articleRepository.save(article);
+
+            return RsData.of(
+                    "S-3",
+                    "등록 완료",
+                    article
+            );
+        } catch (Exception e) {
+            return RsData.of(
+                    "F-3",
+                    "등록 실패",
+                    null
+            );
+        }
     }
 
-    public Article update(Article article, String title, String content) {
-        Article updateArticle = article.toBuilder()
-                .title(title)
-                .content(content)
-                .build();
-        return this.articleRepository.save(updateArticle);
+    @Transactional
+    public RsData<Article> update(Long id, String title, String content) {
+        RsData<Article> articleRsData = this.getArticleById(id);
+        if (articleRsData.isFail()) {
+            return articleRsData;
+        }
+        try {
+            Article updateArticle = articleRsData.getData().toBuilder()
+                    .title(title)
+                    .content(content)
+                    .build();
+            this.articleRepository.save(updateArticle);
+            return RsData.of(
+                    "S-5",
+                    "수정 완료",
+                    updateArticle);
+        } catch (Exception e) {
+            return RsData.of(
+                    "F-5",
+                    "수정 실패",
+                    null
+            );
+        }
     }
 }

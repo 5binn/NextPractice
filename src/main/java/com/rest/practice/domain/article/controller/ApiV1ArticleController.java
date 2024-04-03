@@ -29,7 +29,6 @@ public class ApiV1ArticleController {
     @GetMapping("")
     public RsData<ArticleListResponse> getArticles() {
         List<Article> articleList = this.articleService.getArticleList();
-        System.out.println(articleList);
         return RsData.of("S-1", "성공", new ArticleListResponse(articleList));
     }
 
@@ -43,14 +42,14 @@ public class ApiV1ArticleController {
     public RsData<ArticleResponse> getArticle(@PathVariable("id") Long id) {
         return articleService.getArticleById(id)
                 .map((article) -> RsData.of(
-                "S-1",
-                "성공",
-                new ArticleResponse(article)
-        )).orElseGet(() -> RsData.of(
-                "F-1",
-                "%d 번 게시물 없음".formatted(id),
-                null
-        ));
+                        "S-1",
+                        "성공",
+                        new ArticleResponse(article)
+                )).orElseGet(() -> RsData.of(
+                        "F-1",
+                        "%d 번 게시물 없음".formatted(id),
+                        null
+                ));
     }
 
     @Getter
@@ -63,9 +62,8 @@ public class ApiV1ArticleController {
     }
 
 
-
     @PostMapping("")
-    public RsData<Article> createArticle(@Valid @RequestBody ArticleForm articleForm) {
+    public RsData<ArticleResponse> createArticle(@Valid @RequestBody ArticleForm articleForm) {
         Article article = this.articleService.create(articleForm.getTitle(), articleForm.getContent());
         return RsData.of(
                 "S-1",
@@ -74,7 +72,35 @@ public class ApiV1ArticleController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteArticle(@PathVariable("id") Long id) {
-        return id + " 번 삭제 완료";
+    public RsData<Object> deleteArticle(@PathVariable("id") Long id) {
+        return articleService.getArticleById(id)
+                .map((article) -> {
+                    articleService.delete(article);
+                    return RsData.of(
+                            "D-1",
+                            id + "번 삭제 완료",
+                            null);
+                }).orElseGet(() -> RsData.of(
+                        "F-1",
+                        "%d 번 게시물 없음".formatted(id),
+                        null
+                ));
+
+    }
+
+    @PatchMapping("/{id}")
+    public RsData<ArticleResponse> updateArticle(@PathVariable("id") Long id, @Valid @RequestBody ArticleForm articleForm) {
+        return articleService.getArticleById(id)
+                .map((article) -> {
+                    Article updateArticle = articleService.update(article, articleForm.getTitle(), articleForm.getContent());
+                    return RsData.of(
+                            "S-1",
+                            "수정 완료",
+                            new ArticleResponse(updateArticle));
+                }).orElseGet(() -> RsData.of(
+                        "F-1",
+                        "%d 번 게시물 없음".formatted(id),
+                        null
+                ));
     }
 }

@@ -21,9 +21,9 @@ public class ArticleService {
         return this.articleRepository.findById(id);
     }
 
-//    public void delete(Long id) {
-//        this.articleRepository.delete(article);
-//    }
+    public void delete(Article article) {
+        this.articleRepository.delete(article);
+    }
 
     public Article create(String title, String content) {
         Article article = Article.builder()
@@ -31,5 +31,13 @@ public class ArticleService {
                 .content(content)
                 .build();
         return this.articleRepository.save(article);
+    }
+
+    public Article update(Article article, String title, String content) {
+        Article updateArticle = article.toBuilder()
+                .title(title)
+                .content(content)
+                .build();
+        return this.articleRepository.save(updateArticle);
     }
 }

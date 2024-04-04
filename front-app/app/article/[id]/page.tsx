@@ -9,8 +9,11 @@ interface ArticleResponse extends ApiResponse<ArticleData> { };
 export default function Id() {
     const params = useParams();
     const [article, setArticle] = useState<ArticleData | null>(null);
+
+    const [isClick, setIsClick] = useState(false);
+
     useEffect(() => {
-        fetch("http://localhost:8090/api/v1/articles/" + params.id)
+        fetch(`http://localhost:8090/api/v1/articles/ ${params.id}`)
             .then(response => response.json())
             .then((result: ArticleResponse) => {
                 if (result.msg === "성공") { setArticle(result.data.article); }
@@ -27,13 +30,67 @@ export default function Id() {
         return <div>Loading...</div>; // 로딩 중 메시지 표시
     }
 
+    const onDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        const response = await fetch(`http://localhost:8090/api/v1/articles/ ${params.id}`, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': "application/json"
+            }
+        });
+        if (response.ok) {
+            alert('게시물 삭제 완료');
+            window.location.href = '/article';
+        } else {
+            alert('게시물 삭제 실패했습니다.');
+        }
+    }
+
+    const handleClick = () => {
+        setIsClick(!isClick);
+    }
+
+    const save = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const response = await fetch(`http://localhost:8090/api/v1/articles/${params.id}`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify(article)
+        });
+
+        if (response.ok) {
+            setIsClick(!isClick);
+        } else {
+            alert('게시물 수정에 실패했습니다.');
+        }
+
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setArticle({ ...article, [name]: value });
+        console.log({ ...article, [name]: value })
+    }
+
+
     return (
         <div>
             <h1>{article?.id}번 / TITLE : {article?.title}</h1>
-            <span>{formatDate(article.createdDate)}</span>
+            <h3>{formatDate(article.createdDate)}</h3>
             <div>
                 {article?.content}
             </div>
+            <button onClick={handleClick}>수정</button>
+            <button onClick={onDelete}>삭제</button>
+            {isClick ? (
+                <form onSubmit={save}>
+                    제목<input type="text" name="title" value={article.title} onChange={handleChange}/>
+                    내용<textarea name="content" value={article.content} onChange={handleChange}/>
+                    <button type="submit">저장</button>
+                </form>
+            ) : (<></>)}
         </div>
     );
 

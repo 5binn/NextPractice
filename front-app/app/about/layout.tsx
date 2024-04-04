@@ -7,8 +7,8 @@ export default function AboutLayout({
 }>) {
     return (
         <div>
-            <Link href="/about">ABOUT</Link>
-            <Link href="/about/me"> / ME</Link>{children}
+            <Link href="/about">ABOUT </Link>/
+            <Link href="/about/me"> ME</Link>{children}
         </div>
     );
 }

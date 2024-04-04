@@ -35,28 +35,6 @@ public class ArticleService {
     }
 
     @Transactional
-    public RsData<Article> delete(Long id) {
-        RsData<Article> articleRsData = this.getArticleById(id);
-        if (articleRsData.isFail()) {
-            return articleRsData;
-        }
-        try {
-            this.articleRepository.delete(articleRsData.getData());
-            return RsData.of(
-                    "S-4",
-                    "%d 번 삭제 완료".formatted(id),
-                    articleRsData.getData()
-            );
-        } catch (Exception e) {
-            return RsData.of(
-                    "F-4",
-                    "삭제 실패",
-                    null
-            );
-        }
-    }
-
-    @Transactional
     public RsData<Article> create(String title, String content) {
         try {
             Article article = Article.builder()
@@ -74,6 +52,28 @@ public class ArticleService {
             return RsData.of(
                     "F-3",
                     "등록 실패",
+                    null
+            );
+        }
+    }
+
+    @Transactional
+    public RsData<Article> delete(Long id) {
+        RsData<Article> articleRsData = this.getArticleById(id);
+        if (articleRsData.isFail()) {
+            return articleRsData;
+        }
+        try {
+            this.articleRepository.delete(articleRsData.getData());
+            return RsData.of(
+                    "S-4",
+                    "%d 번 삭제 완료".formatted(id),
+                    articleRsData.getData()
+            );
+        } catch (Exception e) {
+            return RsData.of(
+                    "F-4",
+                    "삭제 실패",
                     null
             );
         }

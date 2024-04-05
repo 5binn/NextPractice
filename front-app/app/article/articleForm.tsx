@@ -1,9 +1,8 @@
 
 
 import { useEffect, useState } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function ArticleForm({fetchArticle}) {
+export default function ArticleForm({ fetchArticle }: any) {
 
     const [article, setArticle] = useState({ title: '', content: '' });
 
@@ -43,13 +42,13 @@ export default function ArticleForm({fetchArticle}) {
         <div>
             {/* {!isClick ? (<button onClick={handleClick}>등록</button>) : (<></>)} */}
             {/* {isClick ? ( */}
-                <form onSubmit={create}>
-                    <label >제목</label>
-                    <input type="text" name="title" value={article.title} onChange={handleChange} />
-                    <label >내용</label>
-                    <textarea name="content" value={article.content} onChange={handleChange} />
-                    <button type="submit">등록</button>
-                </form>
+            <form onSubmit={create}>
+                <label >제목</label>
+                <input type="text" name="title" value={article.title} onChange={handleChange} />
+                <label >내용</label>
+                <textarea name="content" value={article.content} onChange={handleChange} />
+                <button type="submit">등록</button>
+            </form>
         </div>
     )
 }

@@ -5,3 +5,9 @@ export interface ArticleData {
     createdDate: string;
     modifieDDate: string;
 }
+
+export interface ApiResponse<T> {
+    resultCode: string;
+    msg: string;
+    data: T;
+}

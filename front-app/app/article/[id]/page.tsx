@@ -1,13 +1,15 @@
 'use client'
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArticleData, ApiResponse } from "../types"
+import Link from "next/link";
 
 interface ArticleResponse extends ApiResponse<ArticleData> { };
 
 export default function Id() {
     const params = useParams();
+    const router = useRouter();
     const [article, setArticle] = useState<ArticleData | null>(null);
 
     const [isClick, setIsClick] = useState(false);
@@ -30,8 +32,7 @@ export default function Id() {
         return <div>Loading...</div>; // 로딩 중 메시지 표시
     }
 
-    const onDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
+    const onDelete = async () => {
         const response = await fetch(`http://localhost:8090/api/v1/articles/ ${params.id}`, {
             method: "DELETE",
             headers: {
@@ -40,7 +41,7 @@ export default function Id() {
         });
         if (response.ok) {
             alert('게시물 삭제 완료');
-            window.location.href = '/article';
+            router.push("/article");
         } else {
             alert('게시물 삭제 실패했습니다.');
         }
@@ -61,6 +62,7 @@ export default function Id() {
         });
 
         if (response.ok) {
+            alert('수정 완료');
             setIsClick(!isClick);
         } else {
             alert('게시물 수정에 실패했습니다.');
@@ -83,6 +85,7 @@ export default function Id() {
                 {article?.content}
             </div>
             <button onClick={handleClick}>수정</button>
+            <Link href={`/article/${article.id}/edit`}>-수정-</Link>
             <button onClick={onDelete}>삭제</button>
             {isClick ? (
                 <form onSubmit={save}>
